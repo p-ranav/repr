@@ -151,4 +151,12 @@ int main() {
     auto arr = {get_student(0), get_student(1), get_student(2)};
     std::cout << repr(arr) << "\n";
   }
+
+  {
+    std::cout << repr(true) << "\n";
+    std::cout << repr(false) << "\n";
+    
+    std::array<bool, 3> arr{true, false, true};
+    std::cout << repr(arr) << "\n";
+  }
 }

@@ -21,8 +21,16 @@ void print_tuple(Fn fn, std::ostream& os, const char * end, const TupleType& tup
 
 template <class T>
 auto print(T&& c, std::ostream& os, const char * end = "\n") {
+  // boolean
+  if constexpr (std::is_same_v<typename std::decay<T>::type, bool>) {
+    if (c) {
+      os << "true" << end;
+    } else {
+      os << "false" << end;
+    }
+  }
   // pointer
-  if constexpr (std::is_pointer<typename std::decay<T>::type>::value) {
+  else if constexpr (std::is_pointer<typename std::decay<T>::type>::value) {
     if (c == nullptr) {
       os << "nullptr" << end;
     } else {
