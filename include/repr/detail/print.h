@@ -21,8 +21,9 @@ void print_tuple(Fn fn, std::ostream& os, const char * end, const TupleType& tup
 
 template <class T>
 auto print(T&& c, std::ostream& os, const char * end = "\n") {
+  typedef typename std::decay<T>::type decayed_type;
   // boolean
-  if constexpr (std::is_same_v<typename std::decay<T>::type, bool>) {
+  if constexpr (std::is_same_v<decayed_type, bool>) {
     if (c) {
       os << "true" << end;
     } else {
@@ -30,11 +31,11 @@ auto print(T&& c, std::ostream& os, const char * end = "\n") {
     }
   }
   // pointer
-  else if constexpr (std::is_pointer<typename std::decay<T>::type>::value) {
+  else if constexpr (std::is_pointer<decayed_type>::value) {
     if (c == nullptr) {
       os << "nullptr" << end;
     } else {
-      if constexpr (std::is_same_v<typename std::decay<T>::type, const char*>) {
+      if constexpr (std::is_same_v<decayed_type, const char*>) {
         os << '"' << c << '"' << end;
       } else {
         os << c << end;
@@ -42,35 +43,39 @@ auto print(T&& c, std::ostream& os, const char * end = "\n") {
     }
   }
   // enum
-  else if constexpr (std::is_enum<typename std::decay<T>::type>::value) {
+  else if constexpr (std::is_enum<decayed_type>::value) {
     using namespace magic_enum::ostream_operators;
     os << c << end;
   }
   // complex
-  else if constexpr (is_complex<typename std::decay<T>::type>::value) {
+  else if constexpr (is_complex<decayed_type>::value) {
     os  << "(" << c.real() << " + " << c.imag() << "i)" << end;
   }
   // float, double, long double
-  else if constexpr (std::is_floating_point<typename std::decay<T>::type>::value) {
-    os << c << end;
+  else if constexpr (std::is_floating_point<decayed_type>::value) {
+    if (std::is_same_v<decayed_type, float>) {
+      os << c << 'f' << end;
+    } else {
+      os << c << end;
+    }
   }
   // char
-  else if constexpr (std::is_same_v<typename std::decay<T>::type, char>) {
+  else if constexpr (std::is_same_v<decayed_type, char>) {
     os << "'" << c << "'" << end;
   }
-  else if constexpr (std::is_fundamental<typename std::decay<T>::type>::value) {
+  else if constexpr (std::is_fundamental<decayed_type>::value) {
     os << c << end;
   }
   // std::string
-  else if constexpr (has_cstr<typename std::decay<T>::type, const char *()>::value) {
+  else if constexpr (has_cstr<decayed_type, const char *()>::value) {
     os << '"' << c.c_str() << "\"" << end;
   }
   // std::string_view
-  else if constexpr (has_data<typename std::decay<T>::type, const char *()>::value) {
+  else if constexpr (has_data<decayed_type, const char *()>::value) {
     os << '"' << c.data() << "\"" << end;
   }
   // std::map-like container
-  else if constexpr (is_mappish<typename std::decay<T>::type>::value) {
+  else if constexpr (is_mappish<decayed_type>::value) {
     os << "{";
     const auto size = c.size();
     std::size_t i{0};
@@ -86,7 +91,7 @@ auto print(T&& c, std::ostream& os, const char * end = "\n") {
     os << "}" << end;
   }
   // std::vector-like container type
-  else if constexpr (is_vectorish<typename std::decay<T>::type>::value) {
+  else if constexpr (is_vectorish<decayed_type>::value) {
     os << "{";
     const auto size = c.size();
     std::size_t i{0};
@@ -100,7 +105,7 @@ auto print(T&& c, std::ostream& os, const char * end = "\n") {
     os << "}" << end;
   }
   // stack-like container type
-  else if constexpr (is_stackish<typename std::decay<T>::type>::value) {
+  else if constexpr (is_stackish<decayed_type>::value) {
     os << "{";
     auto q = std::forward<T>(c);
     const auto size = q.size();
@@ -116,7 +121,7 @@ auto print(T&& c, std::ostream& os, const char * end = "\n") {
     os << "}" << end;
   }
   // queue-like container type
-  else if constexpr (is_queueish<typename std::decay<T>::type>::value) {
+  else if constexpr (is_queueish<decayed_type>::value) {
     os << "{";
     auto q = std::forward<T>(c);
     const auto size = q.size();
@@ -132,15 +137,15 @@ auto print(T&& c, std::ostream& os, const char * end = "\n") {
     os << "}" << end;
   }
   // tuple type
-  else if constexpr (is_specialization<typename std::decay<T>::type, std::tuple>::value) {
+  else if constexpr (is_specialization<decayed_type, std::tuple>::value) {
     const auto tuple_element_printer = [] (const auto& e) {
       std::stringstream os;
       print(e, os, "");
       return os.str();
     };
-    print_tuple(tuple_element_printer, os, "", c, std::make_index_sequence<std::tuple_size<typename std::decay<T>::type>::value>());
+    print_tuple(tuple_element_printer, os, "", c, std::make_index_sequence<std::tuple_size<decayed_type>::value>());
   }
-  else if constexpr (is_printable<typename std::decay<T>::type>::value) {
+  else if constexpr (is_printable<decayed_type>::value) {
     os << c << end;
   } 
   else {
