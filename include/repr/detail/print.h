@@ -6,6 +6,7 @@
 #include <repr/detail/has_c_str.h>
 #include <repr/detail/has_data.h>
 #include <repr/detail/is_complex.h>
+#include <repr/detail/is_initializer_listish.h>
 #include <repr/detail/is_vectorish.h>
 #include <repr/detail/is_stackish.h>
 #include <repr/detail/is_queueish.h>
@@ -96,6 +97,20 @@ auto print(T&& c, std::ostream& os, const char * end = "\n") {
   }
   // std::vector-like container type
   else if constexpr (is_vectorish<decayed_type>::value) {
+    os << "{";
+    const auto size = c.size();
+    std::size_t i{0};
+    for (const auto& e: c) {
+      print(e, os, "");
+      i += 1;
+      if (i < size) {
+        os << ", ";
+      }
+    }
+    os << "}" << end;
+  }
+  // std::initializer_list-like container type
+  else if constexpr (is_initializer_listish<decayed_type>::value) {
     os << "{";
     const auto size = c.size();
     std::size_t i{0};
