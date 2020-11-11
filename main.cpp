@@ -185,4 +185,20 @@ int main() {
     v = 'y';
     std::cout << repr(v) << "\n";
   }
+
+  {
+    std::vector<std::variant<bool, int, int *, float, std::string, std::vector<int>,		      
+          std::map<std::string, std::map<std::string, int>>, 
+          std::pair<double, double>>> var;
+    var.push_back(5);
+    var.push_back(nullptr);
+    var.push_back(3.14f);
+    var.push_back(std::string{"Hello World"});
+    var.push_back(std::vector<int>{1, 2, 3, 4});
+    var.push_back(std::map<std::string, std::map<std::string, int>>{{"a",{{"b",1}}}, {"c",{{"d",2}, {"e",3}}}});
+    var.push_back(true);
+    var.push_back(std::pair<double, double>{1.1, 2.2});
+
+    std::cout << repr(var) << "\n"; 
+  }
 }
