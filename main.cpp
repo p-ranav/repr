@@ -9,6 +9,7 @@
 #include <queue>
 #include <tuple>
 #include <optional>
+#include <variant>
 
 int main() {
   {
@@ -167,5 +168,21 @@ int main() {
 
     std::optional<int> b;
     std::cout << repr(b) << "\n";
+  }
+
+  {
+    std::pair<int, char> p{5, 'c'};
+    std::cout << repr(p) << "\n";
+  }
+
+  {
+    std::variant<int, float, char> v = 5;
+    std::cout << repr(v) << "\n";
+
+    v = 0.543643f;
+    std::cout << repr(v) << "\n";
+
+    v = 'y';
+    std::cout << repr(v) << "\n";
   }
 }

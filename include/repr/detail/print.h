@@ -1,5 +1,8 @@
 #pragma once
 #include <iomanip>
+#include <optional>
+#include <tuple>
+#include <variant>
 #include <repr/detail/has_c_str.h>
 #include <repr/detail/has_data.h>
 #include <repr/detail/is_complex.h>
@@ -9,6 +12,7 @@
 #include <repr/detail/is_mappish.h>
 #include <repr/detail/is_printable.h>
 #include <repr/detail/is_specialization.h>
+#include <repr/detail/is_pair.h>
 #include <repr/detail/magic_enum.hpp>
 
 template<class Fn, class TupleType, size_t... I>
@@ -136,6 +140,14 @@ auto print(T&& c, std::ostream& os, const char * end = "\n") {
     }
     os << "}" << end;
   }
+  // pair type
+  else if constexpr (is_pair<decayed_type>::value) {
+    os << "{";
+    print(c.first, os, "");
+    os << ", ";
+    print(c.second, os, "");
+    os << "}" << end;
+  }
   // tuple type
   else if constexpr (is_specialization<decayed_type, std::tuple>::value) {
     const auto tuple_element_printer = [] (const auto& e) {
@@ -153,9 +165,15 @@ auto print(T&& c, std::ostream& os, const char * end = "\n") {
       os << "nullopt" << end;
     }
   }
+  // variant type
+  else if constexpr (is_specialization<decayed_type, std::variant>::value) {
+    std::visit([&os](const auto& value) { 
+      print(value, os, "");
+    }, c);
+  }
   else if constexpr (is_printable<decayed_type>::value) {
     os << c << end;
-  } 
+  }
   else {
     os << "<Object>" << end;
   }
