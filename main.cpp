@@ -8,6 +8,7 @@
 #include <list>
 #include <queue>
 #include <tuple>
+#include <optional>
 
 int main() {
   {
@@ -155,8 +156,16 @@ int main() {
   {
     std::cout << repr(true) << "\n";
     std::cout << repr(false) << "\n";
-    
+
     std::array<bool, 3> arr{true, false, true};
     std::cout << repr(arr) << "\n";
+  }
+
+  {
+    std::optional<int> a = 5;
+    std::cout << repr(a) << "\n";
+
+    std::optional<int> b;
+    std::cout << repr(b) << "\n";
   }
 }

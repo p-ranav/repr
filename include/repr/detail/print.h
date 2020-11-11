@@ -145,6 +145,14 @@ auto print(T&& c, std::ostream& os, const char * end = "\n") {
     };
     print_tuple(tuple_element_printer, os, "", c, std::make_index_sequence<std::tuple_size<decayed_type>::value>());
   }
+  // optional type
+  else if constexpr (is_specialization<decayed_type, std::optional>::value) {
+    if (c.has_value()) {
+      print(c.value(), os, "");
+    } else {
+      os << "nullopt" << end;
+    }
+  }
   else if constexpr (is_printable<decayed_type>::value) {
     os << c << end;
   } 
