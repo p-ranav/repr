@@ -44,6 +44,10 @@ int main() {
   }
 
   {
+    std::cout << repr("Hello World!") << "\n";
+  }
+
+  {
     std::string_view str{"World"};
     std::cout << repr(str) << "\n";
   }

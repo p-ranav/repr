@@ -26,7 +26,11 @@ auto print(T&& c, std::ostream& os, const char * end = "\n") {
     if (c == nullptr) {
       os << "nullptr" << end;
     } else {
-      os << c << end;
+      if constexpr (std::is_same_v<typename std::decay<T>::type, const char*>) {
+        os << '"' << c << '"' << end;
+      } else {
+        os << c << end;
+      }
     }
   }
   // enum
