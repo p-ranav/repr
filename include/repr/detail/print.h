@@ -16,6 +16,8 @@
 #include <repr/detail/is_pair.h>
 #include <repr/detail/magic_enum.hpp>
 
+namespace repr_detail {
+
 template<class Fn, class TupleType, size_t... I>
 void print_tuple(Fn fn, std::ostream& os, const char * end, const TupleType& tuple, std::index_sequence<I...>)
 {
@@ -186,10 +188,14 @@ auto print(T&& c, std::ostream& os, const char * end = "\n") {
       print(value, os, "");
     }, c);
   }
+  // printable object of type T
   else if constexpr (is_printable<decayed_type>::value) {
     os << c << end;
   }
+  // not printable
   else {
-    os << "<Object>" << end;
+    os << "[object]" << end;
   }
+}
+
 }

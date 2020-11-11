@@ -1,6 +1,8 @@
 #pragma once
 #include <type_traits>
 
+namespace repr_detail {
+
 template<typename T, typename _ = void>
 struct is_vectorish : std::false_type {};
 
@@ -26,3 +28,5 @@ struct is_vectorish<
             void
             >
         > : public std::true_type {};
+
+}

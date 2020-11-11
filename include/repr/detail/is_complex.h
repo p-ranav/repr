@@ -2,9 +2,13 @@
 #include <complex>
 #include <type_traits>
 
+namespace repr_detail {
+
 template <class T> struct is_complex : public std::false_type {};
 template <class T> struct is_complex<const T> : public is_complex<T> {};
 template <class T>
 struct is_complex<volatile const T> : public is_complex<T> {};
 template <class T> struct is_complex<volatile T> : public is_complex<T> {};
 template <class T> struct is_complex<std::complex<T>> : public std::true_type {};
+
+}

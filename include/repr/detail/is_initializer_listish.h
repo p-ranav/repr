@@ -1,6 +1,8 @@
 #pragma once
 #include <type_traits>
 
+namespace repr_detail {
+
 template<typename T, typename _ = void>
 struct is_initializer_listish : std::false_type {};
 
@@ -24,3 +26,5 @@ struct is_initializer_listish<
             void
             >
         > : public std::true_type {};
+
+}

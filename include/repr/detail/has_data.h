@@ -1,6 +1,8 @@
 #pragma once
 #include <type_traits>
 
+namespace repr_detail {
+
 template <typename, typename T> struct has_data : std::false_type {};
 
 template <typename C, typename Ret, typename... Args> struct has_data<C, Ret(Args...)> {
@@ -16,3 +18,5 @@ private:
 public:
   static constexpr bool value = type::value;
 };
+
+}

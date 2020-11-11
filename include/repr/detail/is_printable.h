@@ -2,6 +2,8 @@
 #include <iostream>
 #include <type_traits>
 
+namespace repr_detail {
+
 template<typename _Tp, typename dummy = void>
 struct is_printable : std::false_type {};
 
@@ -11,3 +13,5 @@ struct is_printable<_Tp,
             std::is_same_v<decltype(std::cout << std::declval<_Tp>()), std::ostream&>
         >
     > : std::true_type {};
+
+}

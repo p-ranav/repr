@@ -5,6 +5,6 @@
 template <class T>
 auto repr(T&& value) {
   std::stringstream os;
-  print(std::forward<T>(value), os, "");
+  repr_detail::print(std::forward<T>(value), os, "");
   return os.str();
 }
