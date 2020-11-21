@@ -2,6 +2,7 @@
 #include <iomanip>
 #include <optional>
 #include <tuple>
+#include <string>
 #include <variant>
 #include <repr/detail/has_c_str.h>
 #include <repr/detail/has_data.h>
@@ -15,186 +16,200 @@
 #include <repr/detail/is_specialization.h>
 #include <repr/detail/is_pair.h>
 #include <repr/detail/magic_enum.hpp>
+#define FMT_HEADER_ONLY
+#include <repr/detail/fmt/format.h>
+#include <repr/detail/fmt/ranges.h>
 
 namespace repr_detail {
 
 template<class Fn, class TupleType, size_t... I>
-void print_tuple(Fn fn, std::ostream& os, const char * end, const TupleType& tuple, std::index_sequence<I...>)
+std::string print_tuple(Fn fn, const TupleType& tuple, std::index_sequence<I...>)
 {
+  std::stringstream os;
   os << "{";
   (..., (os << (I == 0? "" : ", ") << fn(std::get<I>(tuple))));
-  os << "}" << end;
+  os << "}";
+  return os.str();
 }
 
 template <class T>
-auto print(T&& c, std::ostream& os, const char * end = "\n") {
+static inline std::string print(T&& c) {
   typedef typename std::decay<T>::type decayed_type;
   // boolean
   if constexpr (std::is_same_v<decayed_type, bool>) {
     if (c) {
-      os << "true" << end;
+      return "true";
     } else {
-      os << "false" << end;
+      return "false";
     }
   }
   // pointer
   else if constexpr (std::is_pointer<decayed_type>::value) {
     if (c == nullptr) {
-      os << "nullptr" << end;
+      return "nullptr";
     } else {
       if constexpr (std::is_same_v<decayed_type, const char*>) {
-        os << '"' << c << '"' << end;
+        return fmt::format("\"{}\"", c);
       } else {
-        os << c << end;
+        std::stringstream os;
+        os << c;
+        return os.str();
       }
     }
   }
   // enum
   else if constexpr (std::is_enum<decayed_type>::value) {
     using namespace magic_enum::ostream_operators;
-    os << c << end;
+    std::stringstream os;
+    os << c;
+    return os.str();
   }
   // complex
   else if constexpr (is_complex<decayed_type>::value) {
-    os  << "(" << c.real() << " + " << c.imag() << "i)" << end;
-  }
-  // float, double, long double
-  else if constexpr (std::is_floating_point<decayed_type>::value) {
-    if (std::is_same_v<decayed_type, float>) {
-      os << c << 'f' << end;
-    } else {
-      os << c << end;
-    }
+    return fmt::format("({} + {}i)", print(c.real()), print(c.imag()));
   }
   // char
   else if constexpr (std::is_same_v<decayed_type, char>) {
-    os << "'" << c << "'" << end;
+    return fmt::format("'{}'", c);
+  }
+  // integral
+  else if constexpr (std::is_integral<decayed_type>::value) {
+    return fmt::format("{}", c);
+  }
+  // float, double, long double
+  else if constexpr (std::is_floating_point<decayed_type>::value) {
+    return fmt::format("{}", c);
   }
   else if constexpr (std::is_fundamental<decayed_type>::value) {
-    os << c << end;
+    return fmt::format("{}", c);
   }
   // std::string
   else if constexpr (has_cstr<decayed_type, const char *()>::value) {
-    os << '"' << c.c_str() << "\"" << end;
+    return fmt::format("\"{}\"", c);
   }
   // std::string_view
   else if constexpr (has_data<decayed_type, const char *()>::value) {
-    os << '"' << c.data() << "\"" << end;
+    return fmt::format("\"{}\"", c.data());
   }
   // std::map-like container
   else if constexpr (is_mappish<decayed_type>::value) {
-    os << "{";
+    std::string result = "{";
     const auto size = c.size();
     std::size_t i{0};
     for (const auto& [k, v]: c) {
-      print(k, os, "");
-      os << ": ";
+      result += print(k) + ": " + print(v);
       i += 1;
-      if (i < size) 
-        print(v, os, ", ");
-      else
-        print(v, os, "");
+      if (i < size) {
+        result += ", ";
+      }
     }
-    os << "}" << end;
+    result += "}";
+    return result;
   }
   // std::vector-like container type
   else if constexpr (is_vectorish<decayed_type>::value) {
-    os << "{";
-    const auto size = c.size();
-    std::size_t i{0};
-    for (const auto& e: c) {
-      print(e, os, "");
-      i += 1;
-      if (i < size) {
-        os << ", ";
+    if constexpr (is_printable<typename decayed_type::value_type>::value) {
+      // value_type is printable
+      return fmt::format("{}", c);
+    } else {
+      std::string result = "{";
+      const auto size = c.size();
+      std::size_t i{0};
+      for (const auto& e: c) {
+        result += print(e);
+        i += 1;
+        if (i < size) {
+          result += ", ";
+        }
       }
+      result += "}";
+      return result;
     }
-    os << "}" << end;
   }
   // std::initializer_list-like container type
   else if constexpr (is_initializer_listish<decayed_type>::value) {
-    os << "{";
+    std::string result = "{";
     const auto size = c.size();
     std::size_t i{0};
     for (const auto& e: c) {
-      print(e, os, "");
+      result += print(e);
       i += 1;
       if (i < size) {
-        os << ", ";
+        result += ", ";
       }
     }
-    os << "}" << end;
+    result += "}";
+    return result;
   }
   // stack-like container type
   else if constexpr (is_stackish<decayed_type>::value) {
-    os << "{";
+    std::string result = "{";
     auto q = std::forward<T>(c);
     const auto size = q.size();
     std::size_t i{0};
     while (!q.empty()) {
-      print(q.top(), os, "");
+      result += print(q.top());
       q.pop();
       i += 1;
       if (i < size) {
-        os << ", ";
+        result += ", ";
       }
     }
-    os << "}" << end;
+    result += "}";
+    return result;
   }
   // queue-like container type
   else if constexpr (is_queueish<decayed_type>::value) {
-    os << "{";
+    std::string result = "{";
     auto q = std::forward<T>(c);
     const auto size = q.size();
     std::size_t i{0};
     while (!q.empty()) {
-      print(q.front(), os, "");
+      result += print(q.front());
       q.pop();
       i += 1;
       if (i < size) {
-        os << ", ";
+        result += ", ";
       }
     }
-    os << "}" << end;
+    result += "}";
+    return result;
   }
   // pair type
   else if constexpr (is_pair<decayed_type>::value) {
-    os << "{";
-    print(c.first, os, "");
-    os << ", ";
-    print(c.second, os, "");
-    os << "}" << end;
+    const std::string result = "{" + print(c.first) + ", " + print(c.second) + "}";
+    return result;
   }
   // tuple type
   else if constexpr (is_specialization<decayed_type, std::tuple>::value) {
     const auto tuple_element_printer = [] (const auto& e) {
-      std::stringstream os;
-      print(e, os, "");
-      return os.str();
+      return print(e);
     };
-    print_tuple(tuple_element_printer, os, "", c, std::make_index_sequence<std::tuple_size<decayed_type>::value>());
+    return print_tuple(tuple_element_printer, c, std::make_index_sequence<std::tuple_size<decayed_type>::value>());
   }
   // optional type
   else if constexpr (is_specialization<decayed_type, std::optional>::value) {
     if (c.has_value()) {
-      print(c.value(), os, "");
+      return print(c.value());
     } else {
-      os << "nullopt" << end;
+      return "nullopt";
     }
   }
   // variant type
   else if constexpr (is_specialization<decayed_type, std::variant>::value) {
-    std::visit([&os](const auto& value) { 
-      print(value, os, "");
+    std::string result{""};
+    std::visit([&result](const auto& value) { 
+      result += print(value);
     }, c);
+    return result;
   }
   // printable object of type T
   else if constexpr (is_printable<decayed_type>::value) {
-    os << c << end;
+    return fmt::format("{}", c);
   }
   // not printable
   else {
-    os << "[object]" << end;
+    return "[object]";
   }
 }
 

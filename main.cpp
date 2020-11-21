@@ -11,47 +11,65 @@
 #include <optional>
 #include <variant>
 
+template <class T>
+std::string fmt_to_string(T&& v) {
+  return fmt::format("{}", v);
+}
+
+void fmt_bench(int howmany) {
+  for (auto i = 0; i < howmany; ++i) {
+    std::vector<std::vector<int>> v = {{1, 2, 3}, {4, 5, 6}};
+    std::string result = "{";
+    for (const auto& e : v) {
+      result += fmt_to_string(e);
+    }
+    result += "}";
+  }
+}
+
+void string_repr_bench(int howmany) {
+  for (auto i = 0; i < howmany; ++i) {
+    std::vector<std::vector<int>> v = {{1, 2, 3}, {4, 5, 6}};
+    const auto vec = repr(v);
+  }
+}
+
 int main() {
+  fmt_bench(1000000);
+  {
+    std::cout << repr("Hello World!") << "\n";
+  }
+
+  {
+    int * ptr = nullptr;
+    std::cout << repr(ptr) << "\n";
+  }
+
+  {
+    int * ptr = new int(5);
+    std::cout << repr(ptr) << "\n";
+    delete ptr;
+  }
+
   {
     std::vector<int> vec{1, 2, 3};
     std::cout << repr(vec) << "\n";
   }
 
   {
-    std::map<std::string,int> map{{"a", 1}, {"b", 2}, {"c", 3}};
-    std::cout << repr(map) << "\n";
+    std::complex<double> c{1, 4};
+    std::cout << repr(c) << "\n";
   }
 
   {
-    std::vector<std::vector<int>> vec{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
-    std::cout << repr(vec) << "\n";
+    std::complex<double> c{1.5323, 4.12415};
+    std::cout << repr(c) << "\n";
   }
 
   {
-    std::array<int, 3> arr{1, 2, 3};
-    std::cout << repr(arr) << "\n";
-  }
-
-  {
-    std::cout << repr(5) << "\n";
-  }
-
-  {
-    std::cout << repr('a') << "\n";
-  }
-
-  {
-    std::string str{"Hello"};
-    std::cout << repr(str) << "\n";
-  }
-
-  {
-    std::cout << repr("Hello World!") << "\n";
-  }
-
-  {
-    std::string_view str{"World"};
-    std::cout << repr(str) << "\n";
+    enum class Color { RED = 2, BLUE = 4, GREEN = 8 };
+    Color color = Color::BLUE;
+    std::cout << repr(color) << "\n";
   }
 
   {
@@ -70,19 +88,77 @@ int main() {
   }
 
   {
-    int * ptr = nullptr;
-    std::cout << repr(ptr) << "\n";
+    std::cout << repr('a') << "\n";
   }
 
   {
-    int * ptr = new int(5);
-    std::cout << repr(ptr) << "\n";
-    delete ptr;
+    std::string str{"Hello"};
+    std::cout << repr(str) << "\n";
+  }
+
+  {
+    std::string_view str{"World"};
+    std::cout << repr(str) << "\n";
+  }
+
+  {
+    std::map<std::string,int> map{{"a", 1}, {"b", 2}, {"c", 3}};
+    std::cout << repr(map) << "\n";
+  }
+
+  {
+    std::vector<std::string> vec{"a", "b", "c"};
+    std::cout << repr(vec) << "\n";
+  }
+
+  {
+    std::vector<char> vec{'a', 'b', 'c'};
+    std::cout << repr(vec) << "\n";
   }
 
   {
     std::map<std::string, std::vector<int>> map{{"a", {1, 2, 3}}, {"b", {4, 5, 6}}, {"c", {7, 8, 9}}};
     std::cout << repr(map) << "\n";
+  }
+
+  {
+    std::cout << repr(5) << "\n";
+  }
+
+  {
+    std::initializer_list<double> foo = {1.0, 2.0, 3.0};
+    std::cout << repr(foo) << "\n";
+  }
+
+  {
+    std::vector<std::vector<int>> vec{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
+    std::cout << repr(vec) << "\n";
+  }
+
+  {
+    std::array<int, 3> arr{1, 2, 3};
+    std::cout << repr(arr) << "\n";
+  }
+
+  {
+    typedef std::array<std::array<int, 3>, 3> Mat3x3;
+    Mat3x3 matrix;
+    matrix[0] = {1, 2, 3};
+    matrix[1] = {4, 5, 6};
+    matrix[2] = {7, 8, 9};
+    std::cout << repr(matrix) << "\n";
+  }
+
+  {
+    std::priority_queue<int> queue;
+    for(int n : {1,8,5,6,3,4,0,9,7,2}) queue.push(n);
+    std::cout << repr(queue) << "\n";
+  }
+
+  {
+    std::queue<int> queue;
+    for(int n : {1,8,5,6,3,4,0,9,7,2}) queue.push(n);
+    std::cout << repr(queue) << "\n";
   }
 
   {
@@ -96,46 +172,14 @@ int main() {
   }
 
   {
-    enum class Color { RED = 2, BLUE = 4, GREEN = 8 };
-    Color color = Color::BLUE;
-    std::cout << repr(color) << "\n";
-  }
-
-  {
-    std::complex<double> c{1, 4};
-    std::cout << repr(c) << "\n";
-  }
-
-  {
-    std::complex<double> c{1.5323, 4.12415};
-    std::cout << repr(c) << "\n";
-  }
-
-  {
-    typedef std::array<std::array<int, 3>, 3> Mat3x3;
-    Mat3x3 matrix;
-    matrix[0] = {1, 2, 3};
-    matrix[1] = {4, 5, 6};
-    matrix[2] = {7, 8, 9};
-    std::cout << repr(matrix) << "\n";
-  }
-
-  {
     std::map<std::string, std::set<int>> foo{ 
       {"foo", {1, 2, 3, 3, 2, 1}}, {"bar", {7, 6, 5, 4}}};
     std::cout << repr(foo) << "\n";
   }
 
   {
-    std::priority_queue<int> queue;
-    for(int n : {1,8,5,6,3,4,0,9,7,2}) queue.push(n);
-    std::cout << repr(queue) << "\n";
-  }
-
-  {
-    std::queue<int> queue;
-    for(int n : {1,8,5,6,3,4,0,9,7,2}) queue.push(n);
-    std::cout << repr(queue) << "\n";
+    std::pair<int, char> p{5, 'c'};
+    std::cout << repr(p) << "\n";
   }
 
   {
@@ -171,11 +215,6 @@ int main() {
   }
 
   {
-    std::pair<int, char> p{5, 'c'};
-    std::cout << repr(p) << "\n";
-  }
-
-  {
     std::variant<int, float, char> v = 5;
     std::cout << repr(v) << "\n";
 
@@ -199,6 +238,6 @@ int main() {
     var.push_back(true);
     var.push_back(std::pair<double, double>{1.1, 2.2});
 
-    std::cout << repr(var) << "\n"; 
+    std::cout << repr(var) << "\n";
   }
 }
