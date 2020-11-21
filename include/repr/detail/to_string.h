@@ -15,8 +15,8 @@
 #include <repr/detail/is_specialization.h>
 #include <repr/detail/is_pairish.h>
 #include <repr/detail/is_optionalish.h>
-#include <magic_enum/magic_enum.hpp>
-#include <boost/pfr.hpp>
+#include <repr/detail/magic_enum/magic_enum.hpp>
+#include <repr/detail/boost/pfr.hpp>
 
 namespace repr_detail {
 

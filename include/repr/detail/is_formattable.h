@@ -1,8 +1,8 @@
 #include <type_traits>
 #define FMT_HEADER_ONLY
-#include <fmt/chrono.h>
-#include <fmt/format.h>
-#include <fmt/ranges.h>
+#include <repr/detail/fmt/chrono.h>
+#include <repr/detail/fmt/format.h>
+#include <repr/detail/fmt/ranges.h>
 
 template <typename T, typename = void>
 struct is_formattable : std::false_type {};
