@@ -45,6 +45,13 @@ int main() {
   }
 
   {
+    using namespace std::complex_literals;
+    std::complex<double> foo = 1. + 2.5i;
+    std::complex<double> bar = 9. + 4i;
+    std::cout << repr(foo) << " * " << repr(bar) << " = " << repr(foo * bar) << "\n";
+  }
+
+  {
     enum class Color { RED = 2, BLUE = 4, GREEN = 8 };
     Color color = Color::BLUE;
     std::cout << repr(color) << "\n";
