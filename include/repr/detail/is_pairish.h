@@ -12,8 +12,7 @@ struct is_pairish<
     T, std::conditional_t<
            false,
            is_pair_helper<typename T::first_type, typename T::second_type,
-                          decltype(std::declval<T>().first),
-                          decltype(std::declval<T>().second)>,
+                          decltype(std::declval<T>().first), decltype(std::declval<T>().second)>,
            void>> : public std::true_type {};
 
 } // namespace repr_detail
