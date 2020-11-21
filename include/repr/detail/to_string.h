@@ -60,9 +60,7 @@ static inline std::string to_string(T&& c) {
                     std::is_same_v<decayed_type, char*>) {
         return fmt::format("\"{}\"", c);
       } else {
-        std::stringstream os;
-        os << c;
-        return os.str();
+        return fmt::format("{}", (void *)c);
       }
     }
   }
