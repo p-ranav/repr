@@ -59,7 +59,9 @@ static inline std::string to_string(T&& c) {
       if constexpr (std::is_same_v<decayed_type, const char*>) {
         return fmt::format("\"{}\"", c);
       } else {
-        return fmt::format("{}", (void *)c);
+        std::stringstream os;
+        os << c;
+        return os.str();
       }
     }
   }
