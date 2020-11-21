@@ -239,4 +239,16 @@ int main() {
     auto dur = std::chrono::duration_cast<std::chrono::microseconds>(15353000ns);
     std::cout << repr(dur) << "\n";
   }
+
+  {
+    struct my_struct {
+      std::vector<int> foo{1, 2, 3};
+      std::map<std::string, int> bar{{"a", 1}, {"b", 2}};
+      std::optional<float> baz{3.14f};
+      bool flag{false};
+    };
+
+    my_struct s;
+    std::cout << repr(s) << "\n";
+  }
 }

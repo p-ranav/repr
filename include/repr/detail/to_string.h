@@ -15,7 +15,8 @@
 #include <repr/detail/is_specialization.h>
 #include <repr/detail/is_pairish.h>
 #include <repr/detail/is_optionalish.h>
-#include <repr/detail/magic_enum.hpp>
+#include <magic_enum/magic_enum.hpp>
+#include <boost/pfr.hpp>
 
 namespace repr_detail {
 
@@ -25,6 +26,16 @@ std::string tuple_to_string(Fn fn, const TupleType& tuple, std::index_sequence<I
   std::stringstream os;
   os << "{";
   (..., (os << (I == 0? "" : ", ") << fn(std::get<I>(tuple))));
+  os << "}";
+  return os.str();
+}
+
+template<class Fn, class StructType, size_t... I>
+std::string struct_to_string(Fn fn, const StructType& s, std::index_sequence<I...>)
+{
+  std::stringstream os;
+  os << "{";
+  (..., (os << (I == 0? "" : ", ") << fn(boost::pfr::get<I>(s))));
   os << "}";
   return os.str();
 }
@@ -203,6 +214,13 @@ static inline std::string to_string(T&& c) {
   // formattable with libfmt
   else if constexpr (is_formattable_v<decayed_type>) {
     return fmt::format("{}", c);
+  }
+  // class 
+  else if constexpr (std::is_class_v<decayed_type>) {
+    const auto struct_element_printer = [] (const auto& e) {
+      return to_string(e);
+    };
+    return struct_to_string(struct_element_printer, c, std::make_index_sequence<boost::pfr::tuple_size<decayed_type>::value>());
   }
   // not printable
   else {
