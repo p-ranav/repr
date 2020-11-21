@@ -235,5 +235,8 @@ int main() {
 
     auto m = 60min;
     std::cout << repr(60min) << "\n"; // 60m
+
+    auto dur = std::chrono::duration_cast<std::chrono::microseconds>(15353000ns);
+    std::cout << repr(dur) << "\n";
   }
 }
