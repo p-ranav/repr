@@ -8,7 +8,7 @@
 * Requires C++17
 * MIT License
 
-`repr()` returns a printable representation of the given object.
+`repr()` returns a printable representation of a given object.
 
 ```cpp
 // standard includes
@@ -22,6 +22,8 @@ using namespace std::literals::chrono_literals;
 
 // library includes
 #include <repr/repr.h>
+
+
 
 // Some user-defined struct
 struct my_struct {
@@ -39,6 +41,8 @@ struct my_struct {
   nested_struct ns;
 };
 
+
+
 int main() {
   my_struct s;
 
@@ -46,3 +50,7 @@ int main() {
   // {{"a": {1, 2}, "b": {3, 4}}, 3.14, {3, 'A', "Lisa Simpson"}, info, {5345ns, 9876ns}}
 }
 ```
+
+## Getting Started
+
+`repr` is a header-only library - Add `include/` to your `target_include_directories` and include `<repr/repr.hpp>`.
