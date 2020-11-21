@@ -11,19 +11,16 @@
 #include <repr/detail/is_stackish.h>
 #include <repr/detail/is_queueish.h>
 #include <repr/detail/is_mappish.h>
-#include <repr/detail/is_printable.h>
+#include <repr/detail/is_formattable.h>
 #include <repr/detail/is_specialization.h>
 #include <repr/detail/is_pairish.h>
 #include <repr/detail/is_optionalish.h>
 #include <repr/detail/magic_enum.hpp>
-#define FMT_HEADER_ONLY
-#include <repr/detail/fmt/format.h>
-#include <repr/detail/fmt/ranges.h>
 
 namespace repr_detail {
 
 template<class Fn, class TupleType, size_t... I>
-std::string print_tuple(Fn fn, const TupleType& tuple, std::index_sequence<I...>)
+std::string tuple_to_string(Fn fn, const TupleType& tuple, std::index_sequence<I...>)
 {
   std::stringstream os;
   os << "{";
@@ -33,7 +30,7 @@ std::string print_tuple(Fn fn, const TupleType& tuple, std::index_sequence<I...>
 }
 
 template <class T>
-static inline std::string print(T&& c) {
+static inline std::string to_string(T&& c) {
   typedef typename std::decay<T>::type decayed_type;
   // boolean
   if constexpr (std::is_same_v<decayed_type, bool>) {
@@ -66,7 +63,7 @@ static inline std::string print(T&& c) {
   }
   // complex
   else if constexpr (is_complexish<decayed_type>::value) {
-    return fmt::format("({} + {}i)", print(c.real()), print(c.imag()));
+    return fmt::format("({} + {}i)", to_string(c.real()), to_string(c.imag()));
   }
   // char
   else if constexpr (std::is_same_v<decayed_type, char>) {
@@ -97,7 +94,7 @@ static inline std::string print(T&& c) {
     const auto size = c.size();
     std::size_t i{0};
     for (const auto& [k, v]: c) {
-      result += print(k) + ": " + print(v);
+      result += to_string(k) + ": " + to_string(v);
       i += 1;
       if (i < size) {
         result += ", ";
@@ -108,7 +105,7 @@ static inline std::string print(T&& c) {
   }
   // std::vector-like container type
   else if constexpr (is_vectorish<decayed_type>::value) {
-    if constexpr (is_printable<typename decayed_type::value_type>::value) {
+    if constexpr (is_formattable_v<typename decayed_type::value_type>) {
       // value_type is printable
       return fmt::format("{}", c);
     } else {
@@ -116,7 +113,7 @@ static inline std::string print(T&& c) {
       const auto size = c.size();
       std::size_t i{0};
       for (const auto& e: c) {
-        result += print(e);
+        result += to_string(e);
         i += 1;
         if (i < size) {
           result += ", ";
@@ -132,7 +129,7 @@ static inline std::string print(T&& c) {
     const auto size = c.size();
     std::size_t i{0};
     for (const auto& e: c) {
-      result += print(e);
+      result += to_string(e);
       i += 1;
       if (i < size) {
         result += ", ";
@@ -148,7 +145,7 @@ static inline std::string print(T&& c) {
     const auto size = q.size();
     std::size_t i{0};
     while (!q.empty()) {
-      result += print(q.top());
+      result += to_string(q.top());
       q.pop();
       i += 1;
       if (i < size) {
@@ -165,7 +162,7 @@ static inline std::string print(T&& c) {
     const auto size = q.size();
     std::size_t i{0};
     while (!q.empty()) {
-      result += print(q.front());
+      result += to_string(q.front());
       q.pop();
       i += 1;
       if (i < size) {
@@ -177,20 +174,20 @@ static inline std::string print(T&& c) {
   }
   // pair type
   else if constexpr (is_pairish<decayed_type>::value) {
-    const std::string result = "{" + print(c.first) + ", " + print(c.second) + "}";
+    const std::string result = "{" + to_string(c.first) + ", " + to_string(c.second) + "}";
     return result;
   }
   // tuple type
   else if constexpr (is_specialization<decayed_type, std::tuple>::value) {
     const auto tuple_element_printer = [] (const auto& e) {
-      return print(e);
+      return to_string(e);
     };
-    return print_tuple(tuple_element_printer, c, std::make_index_sequence<std::tuple_size<decayed_type>::value>());
+    return tuple_to_string(tuple_element_printer, c, std::make_index_sequence<std::tuple_size<decayed_type>::value>());
   }
   // optional type
   else if constexpr (is_optionalish<decayed_type>::value) {
     if (c.has_value()) {
-      return print(c.value());
+      return to_string(c.value());
     } else {
       return "nullopt";
     }
@@ -199,12 +196,12 @@ static inline std::string print(T&& c) {
   else if constexpr (is_specialization<decayed_type, std::variant>::value) {
     std::string result{""};
     std::visit([&result](const auto& value) { 
-      result += print(value);
+      result += to_string(value);
     }, c);
     return result;
   }
-  // printable object of type T
-  else if constexpr (is_printable<decayed_type>::value) {
+  // formattable with libfmt
+  else if constexpr (is_formattable_v<decayed_type>) {
     return fmt::format("{}", c);
   }
   // not printable

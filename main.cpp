@@ -10,6 +10,8 @@
 #include <queue>
 #include <tuple>
 #include <optional>
+#include <chrono>
+#include <iostream>
 
 int main() {
   {
@@ -215,5 +217,23 @@ int main() {
     var.push_back(std::pair<double, double>{1.1, 2.2});
 
     std::cout << repr(var) << "\n";
+  }
+
+  {
+    using namespace std::literals::chrono_literals;
+    auto ns = 5345ns;
+    std::cout << repr(ns) << "\n"; // 5345ns
+
+    auto us = 123us;
+    std::cout << repr(us) << "\n"; // 123us
+
+    auto ms = 15ms;
+    std::cout << repr(ms) << "\n"; // 15ms
+
+    auto s = 412s;
+    std::cout << repr(s) << "\n"; // 412s
+
+    auto m = 60min;
+    std::cout << repr(60min) << "\n"; // 60m
   }
 }
