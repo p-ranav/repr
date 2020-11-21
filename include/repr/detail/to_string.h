@@ -56,8 +56,7 @@ static inline std::string to_string(T&& c) {
     if (c == nullptr) {
       return "nullptr";
     } else {
-      if constexpr (std::is_same_v<decayed_type, const char*> ||
-                    std::is_same_v<decayed_type, char*>) {
+      if constexpr (std::is_same_v<decayed_type, const char*>) {
         return fmt::format("\"{}\"", c);
       } else {
         return fmt::format("{}", (void *)c);
