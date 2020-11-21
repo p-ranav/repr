@@ -2,8 +2,6 @@
 
 include(CMakeFindDependencyMacro)
 
-find_dependency(Threads REQUIRED)
-
-if (NOT TARGET indicators::indicators)
-  include(${CMAKE_CURRENT_LIST_DIR}/indicatorsTargets.cmake)
+if (NOT TARGET repr::repr)
+  include(${CMAKE_CURRENT_LIST_DIR}/reprTargets.cmake)
 endif ()
