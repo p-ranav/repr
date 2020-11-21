@@ -12,6 +12,7 @@
 #include <optional>
 #include <chrono>
 #include <iostream>
+using namespace std::literals::chrono_literals;
 
 int main() {
   {
@@ -249,10 +250,20 @@ int main() {
 
   {
     struct my_struct {
-      std::vector<int> foo{1, 2, 3};
+      std::vector<int> foo{1, 2};
       std::map<std::string, int> bar{{"a", 4}, {"b", 5}};
       std::optional<float> baz{3.14};
       bool flag{false};
+      std::tuple<int, char, std::string> tup = std::make_tuple(3.8, 'A', "Lisa Simpson");
+
+      enum class log_level { info, warn, error };
+      log_level level{log_level::info}; 
+
+      struct nested_struct {
+        std::chrono::nanoseconds start{5345ns};
+        std::chrono::nanoseconds end{9876ns};
+      };
+      nested_struct ns;
     };
 
     my_struct s;
