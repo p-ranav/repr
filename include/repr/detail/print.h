@@ -1,12 +1,11 @@
 #pragma once
-#include <iomanip>
-#include <optional>
 #include <tuple>
+#include <sstream>
 #include <string>
 #include <variant>
 #include <repr/detail/has_c_str.h>
 #include <repr/detail/has_data.h>
-#include <repr/detail/is_complex.h>
+#include <repr/detail/is_complexish.h>
 #include <repr/detail/is_initializer_listish.h>
 #include <repr/detail/is_vectorish.h>
 #include <repr/detail/is_stackish.h>
@@ -14,7 +13,8 @@
 #include <repr/detail/is_mappish.h>
 #include <repr/detail/is_printable.h>
 #include <repr/detail/is_specialization.h>
-#include <repr/detail/is_pair.h>
+#include <repr/detail/is_pairish.h>
+#include <repr/detail/is_optionalish.h>
 #include <repr/detail/magic_enum.hpp>
 #define FMT_HEADER_ONLY
 #include <repr/detail/fmt/format.h>
@@ -65,7 +65,7 @@ static inline std::string print(T&& c) {
     return os.str();
   }
   // complex
-  else if constexpr (is_complex<decayed_type>::value) {
+  else if constexpr (is_complexish<decayed_type>::value) {
     return fmt::format("({} + {}i)", print(c.real()), print(c.imag()));
   }
   // char
@@ -176,7 +176,7 @@ static inline std::string print(T&& c) {
     return result;
   }
   // pair type
-  else if constexpr (is_pair<decayed_type>::value) {
+  else if constexpr (is_pairish<decayed_type>::value) {
     const std::string result = "{" + print(c.first) + ", " + print(c.second) + "}";
     return result;
   }
@@ -188,7 +188,7 @@ static inline std::string print(T&& c) {
     return print_tuple(tuple_element_printer, c, std::make_index_sequence<std::tuple_size<decayed_type>::value>());
   }
   // optional type
-  else if constexpr (is_specialization<decayed_type, std::optional>::value) {
+  else if constexpr (is_optionalish<decayed_type>::value) {
     if (c.has_value()) {
       return print(c.value());
     } else {

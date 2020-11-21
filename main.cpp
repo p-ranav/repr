@@ -1,5 +1,6 @@
 #include <repr/repr.h>
 #include <array>
+#include <complex>
 #include <map>
 #include <string>
 #include <string_view>
@@ -9,33 +10,8 @@
 #include <queue>
 #include <tuple>
 #include <optional>
-#include <variant>
-
-template <class T>
-std::string fmt_to_string(T&& v) {
-  return fmt::format("{}", v);
-}
-
-void fmt_bench(int howmany) {
-  for (auto i = 0; i < howmany; ++i) {
-    std::vector<std::vector<int>> v = {{1, 2, 3}, {4, 5, 6}};
-    std::string result = "{";
-    for (const auto& e : v) {
-      result += fmt_to_string(e);
-    }
-    result += "}";
-  }
-}
-
-void string_repr_bench(int howmany) {
-  for (auto i = 0; i < howmany; ++i) {
-    std::vector<std::vector<int>> v = {{1, 2, 3}, {4, 5, 6}};
-    const auto vec = repr(v);
-  }
-}
 
 int main() {
-  fmt_bench(1000000);
   {
     std::cout << repr("Hello World!") << "\n";
   }
