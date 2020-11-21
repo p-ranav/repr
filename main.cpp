@@ -243,8 +243,8 @@ int main() {
   {
     struct my_struct {
       std::vector<int> foo{1, 2, 3};
-      std::map<std::string, int> bar{{"a", 1}, {"b", 2}};
-      std::optional<float> baz{3.14f};
+      std::map<std::string, int> bar{{"a", 4}, {"b", 5}};
+      std::optional<float> baz{3.14};
       bool flag{false};
     };
 
