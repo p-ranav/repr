@@ -50,7 +50,3 @@ int main() {
   // {{"a": {1, 2}, "b": {3, 4}}, 3.14, {3, 'A', "Lisa Simpson"}, info, {5345ns, 9876ns}}
 }
 ```
-
-## Getting Started
-
-`repr` is a header-only library - Add `include/` to your `target_include_directories` and include `<repr/repr.hpp>`.
