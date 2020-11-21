@@ -2,11 +2,13 @@
   <img height="60" src="img/logo.png"/> 
 </p>
 
-This library provides a single function `repr(value) -> std::string` that returns a printable string representation of `value`.
+## Highlights
 
 * Header-only library
 * Requires C++17
 * MIT License
+
+`repr()` returns a printable representation of the given object.
 
 ```cpp
 // standard includes
@@ -30,7 +32,6 @@ int main() {
 
   my_struct s;
   
-  fmt::print("{}\n", repr(s)); // {{1, 2, 3}, {"a": 4, "b": 5}, 3.14, false}
-
+  std::string r = repr(s); // {{1, 2, 3}, {"a": 4, "b": 5}, 3.14, false}
 }
 ```
