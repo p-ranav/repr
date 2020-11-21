@@ -2,6 +2,12 @@
   <img height="60" src="img/logo.png"/> 
 </p>
 
+This library provides a single function `repr(value) -> std::string` that returns a printable string representation of `value`.
+
+* Header-only library
+* Requires C++17
+* MIT License
+
 ```cpp
 // standard includes
 #include <iostream>
