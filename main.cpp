@@ -250,10 +250,8 @@ int main() {
 
   {
     struct my_struct {
-      std::vector<int> foo{1, 2};
-      std::map<std::string, int> bar{{"a", 4}, {"b", 5}};
+      std::map<std::string, std::vector<int>> map{{"a", {1, 2}}, {"b", {3, 4}}};
       std::optional<float> baz{3.14};
-      bool flag{false};
       std::tuple<int, char, std::string> tup = std::make_tuple(3.8, 'A', "Lisa Simpson");
 
       enum class log_level { info, warn, error };
@@ -265,6 +263,9 @@ int main() {
       };
       nested_struct ns;
     };
+
+    constexpr std::string_view greet = "Hello World";
+    std::cout << repr(greet) << "\n";
 
     my_struct s;
     std::cout << repr(s) << "\n";
