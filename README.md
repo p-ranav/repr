@@ -80,7 +80,7 @@ int main() {
 }
 ```
 
-## Building Samples
+## Building
 
 ```bash
 git clone https://github.com/p-ranav/repr
