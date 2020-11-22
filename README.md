@@ -50,3 +50,38 @@ int main() {
   // {{"a": {1, 2}, "b": {3, 4}}, 3.14, {true, 'A', "Lisa Simpson"}, info, {5345ns, 9876ns}}
 }
 ```
+
+## Getting Started
+
+`repr` is a header-only library. Add `include/` to your `target_include_directories` and include `<repr/repr.h>`. 
+
+`repr(value)` returns a printable string representation of value. To achieve this, `repr` uses `libfmt`, `magic_enum` and `boost::pfr` and provides a nice convenience function.
+
+`repr()` supports fundamental types, containers, container adapters, and aggregate-initializable classes/structs.
+
+```cpp
+#include <repr/repr.h>
+#include <vector>
+#include <iostream>
+
+int main() {
+  std::vector<std::vector<int>> mat{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
+  std::cout << repr(mat) << "\n";
+  // {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}}
+
+  std::map<std::string, std::vector<int>> map{{"a", {1, 2, 3}}, {"b", {4, 5, 6}}, {"c", {7, 8, 9}}};
+  std::cout << repr(map) << "\n";
+  // {"a": {1, 2, 3}, "b": {4, 5, 6}, "c": {7, 8, 9}}
+
+  std::optional<int> opt;
+  std::cout << repr(opt) << "\n";
+  // nullopt
+
+  enum class Color { RED = 2, BLUE = 4, GREEN = 8 };
+  Color color = Color::BLUE;
+  std::cout << repr(color) << "\n";
+  // BLUE
+}
+```
+
+
