@@ -8,7 +8,40 @@
 * Requires C++17
 * MIT License
 
-`repr()` returns a printable representation of a given object.
+## Getting Started
+
+`repr` is a header-only library. Add `include/` to your `target_include_directories` and include `<repr/repr.h>`. 
+
+`repr(value)` returns a printable string representation of value. To achieve this, `repr` uses [libfmt](https://github.com/fmtlib/fmt), [magic_enum](https://github.com/Neargye/magic_enum) and [boost::pfr](https://github.com/boostorg/pfr), and provides a nice convenience function.
+
+`repr()` supports fundamental types, strings, containers, container adapters, aggregate-initializable classes/structs and chrono types.
+
+```cpp
+#include <repr/repr.h>
+#include <vector>
+#include <iostream>
+
+int main() {
+  std::vector<std::vector<int>> mat{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
+  std::cout << repr(mat) << "\n";
+  // {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}}
+
+  std::map<std::string, std::vector<int>> map{{"a", {1, 2, 3}}, {"b", {4, 5, 6}}, {"c", {7, 8, 9}}};
+  std::cout << repr(map) << "\n";
+  // {{"a", {1, 2, 3}}, {"b", {4, 5, 6}}, {"c", {7, 8, 9}}}
+
+  std::optional<int> opt;
+  std::cout << repr(opt) << "\n";
+  // nullopt
+
+  enum class Color { RED = 2, BLUE = 4, GREEN = 8 };
+  Color color = Color::BLUE;
+  std::cout << repr(color) << "\n";
+  // BLUE
+}
+```
+
+### Aggregate-Initializable Structs 
 
 ```cpp
 // standard includes
@@ -44,39 +77,6 @@ int main() {
 
   std::cout << repr(s) << "\n";
   // {{{"a", {1, 2}}, {"b", {3, 4}}}, 3.14, {3, 'A', "Lisa Simpson"}, info, {5345ns, 9876ns}}
-}
-```
-
-## Getting Started
-
-`repr` is a header-only library. Add `include/` to your `target_include_directories` and include `<repr/repr.h>`. 
-
-`repr(value)` returns a printable string representation of value. To achieve this, `repr` uses [libfmt](https://github.com/fmtlib/fmt), [magic_enum](https://github.com/Neargye/magic_enum) and [boost::pfr](https://github.com/boostorg/pfr), and provides a nice convenience function.
-
-`repr()` supports fundamental types, strings, containers, container adapters, aggregate-initializable classes/structs and chrono types.
-
-```cpp
-#include <repr/repr.h>
-#include <vector>
-#include <iostream>
-
-int main() {
-  std::vector<std::vector<int>> mat{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
-  std::cout << repr(mat) << "\n";
-  // {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}}
-
-  std::map<std::string, std::vector<int>> map{{"a", {1, 2, 3}}, {"b", {4, 5, 6}}, {"c", {7, 8, 9}}};
-  std::cout << repr(map) << "\n";
-  // {{"a", {1, 2, 3}}, {"b", {4, 5, 6}}, {"c", {7, 8, 9}}}
-
-  std::optional<int> opt;
-  std::cout << repr(opt) << "\n";
-  // nullopt
-
-  enum class Color { RED = 2, BLUE = 4, GREEN = 8 };
-  Color color = Color::BLUE;
-  std::cout << repr(color) << "\n";
-  // BLUE
 }
 ```
 
