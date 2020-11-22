@@ -51,9 +51,9 @@ int main() {
 
 `repr` is a header-only library. Add `include/` to your `target_include_directories` and include `<repr/repr.h>`. 
 
-`repr(value)` returns a printable string representation of value. To achieve this, `repr` uses `libfmt`, `magic_enum` and `boost::pfr` and provides a nice convenience function.
+`repr(value)` returns a printable string representation of value. To achieve this, `repr` uses [libfmt](https://github.com/fmtlib/fmt), [magic_enum](https://github.com/Neargye/magic_enum) and [boost::pfr](https://github.com/boostorg/pfr) and provides a nice convenience function.
 
-`repr()` supports fundamental types, containers, container adapters, and aggregate-initializable classes/structs.
+`repr()` supports fundamental types, strings, containers, container adapters, and aggregate-initializable classes/structs.
 
 ```cpp
 #include <repr/repr.h>
