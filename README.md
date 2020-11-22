@@ -43,7 +43,7 @@ int main() {
   my_struct s;
 
   std::cout << repr(s) << "\n";
-  // {{"a": {1, 2}, "b": {3, 4}}, 3.14, {true, 'A', "Lisa Simpson"}, info, {5345ns, 9876ns}}
+  // {{{"a", {1, 2}}, {"b", {3, 4}}}, 3.14, {3, 'A', "Lisa Simpson"}, info, {5345ns, 9876ns}}
 }
 ```
 
@@ -67,7 +67,7 @@ int main() {
 
   std::map<std::string, std::vector<int>> map{{"a", {1, 2, 3}}, {"b", {4, 5, 6}}, {"c", {7, 8, 9}}};
   std::cout << repr(map) << "\n";
-  // {"a": {1, 2, 3}, "b": {4, 5, 6}, "c": {7, 8, 9}}
+  // {{"a", {1, 2, 3}}, {"b", {4, 5, 6}}, {"c", {7, 8, 9}}}
 
   std::optional<int> opt;
   std::cout << repr(opt) << "\n";

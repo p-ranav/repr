@@ -104,8 +104,8 @@ static inline std::string to_string(T&& c) {
     std::string result = "{";
     const auto size = c.size();
     std::size_t i{0};
-    for (const auto& [k, v]: c) {
-      result += to_string(k) + ": " + to_string(v);
+    for (const auto& kvpair: c) {
+      result += to_string(kvpair);
       i += 1;
       if (i < size) {
         result += ", ";
