@@ -53,7 +53,7 @@ int main() {
 
 `repr(value)` returns a printable string representation of value. To achieve this, `repr` uses [libfmt](https://github.com/fmtlib/fmt), [magic_enum](https://github.com/Neargye/magic_enum) and [boost::pfr](https://github.com/boostorg/pfr) and provides a nice convenience function.
 
-`repr()` supports fundamental types, strings, containers, container adapters, aggregate-initializable classes/structs and chrono.
+`repr()` supports fundamental types, strings, containers, container adapters, aggregate-initializable classes/structs and chrono types.
 
 ```cpp
 #include <repr/repr.h>
