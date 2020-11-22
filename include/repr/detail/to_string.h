@@ -21,7 +21,7 @@
 namespace repr_detail {
 
 template<class Fn, class TupleType, size_t... I>
-std::string tuple_to_string(Fn fn, const TupleType& tuple, std::index_sequence<I...>)
+static inline std::string tuple_to_string(Fn fn, const TupleType& tuple, std::index_sequence<I...>)
 {
   std::stringstream os;
   os << "{";
