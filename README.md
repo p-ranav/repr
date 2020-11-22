@@ -23,8 +23,6 @@ using namespace std::literals::chrono_literals;
 // library includes
 #include <repr/repr.h>
 
-
-
 // Some user-defined struct
 struct my_struct {
   std::map<std::string, std::vector<int>> map{{"a", {1, 2}}, {"b", {3, 4}}};
@@ -40,8 +38,6 @@ struct my_struct {
   };
   nested_struct ns;
 };
-
-
 
 int main() {
   my_struct s;
