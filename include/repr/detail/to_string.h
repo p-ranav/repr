@@ -31,7 +31,7 @@ static inline std::string tuple_to_string(Fn fn, const TupleType& tuple, std::in
 }
 
 template<class Fn, class StructType, size_t... I>
-std::string struct_to_string(Fn fn, const StructType& s, std::index_sequence<I...>)
+static inline std::string struct_to_string(Fn fn, const StructType& s, std::index_sequence<I...>)
 {
   std::stringstream os;
   os << "{";
