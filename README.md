@@ -29,7 +29,7 @@ using namespace std::literals::chrono_literals;
 struct my_struct {
   std::map<std::string, std::vector<int>> map{{"a", {1, 2}}, {"b", {3, 4}}};
   std::optional<float> baz{3.14};
-  std::tuple<int, char, std::string> tup = std::make_tuple(3.8, 'A', "Lisa Simpson");
+  std::tuple<bool, char, std::string> tup = std::make_tuple(true, 'A', "Lisa Simpson");
 
   enum class log_level { info, warn, error };
   log_level level{log_level::info}; 
@@ -47,6 +47,6 @@ int main() {
   my_struct s;
 
   std::cout << repr(s) << "\n";
-  // {{"a": {1, 2}, "b": {3, 4}}, 3.14, {3, 'A', "Lisa Simpson"}, info, {5345ns, 9876ns}}
+  // {{"a": {1, 2}, "b": {3, 4}}, 3.14, {true, 'A', "Lisa Simpson"}, info, {5345ns, 9876ns}}
 }
 ```
